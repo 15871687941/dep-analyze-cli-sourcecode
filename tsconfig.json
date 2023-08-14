@@ -1,0 +1,28 @@
+{
+    // 在项目根目录下执行tsc，会自动搜索该文件tsconfig.json
+    // 也可以指定 tsc --project|-p /**/tsconfig.json
+    // tsc编译选项
+    "compilerOptions": {
+      // 编译后的js代码版本
+      "target":"ES2015",
+      // 编译后的使用的模块系统
+      "module": "CommonJS",
+      // 用于处理在使用不同模块系统（如 CommonJS 和 ES 模块）之间进行交互时可能出现的一些兼容性问题。
+      "esModuleInterop": true,
+      // 编译后的输出目录
+      "outDir": "dist",
+      // 项目根目录
+      "rootDir": "./",
+      // 严格模式
+      "strict": true
+    },
+    // 需要被编译的文件或目录的匹配模式
+    "include": [
+      "./**/*.ts"
+    ],
+    // 需要排除在编译之外的文件或文件夹的匹配模式
+    "exclude": [
+
+    ]
+}
+  
