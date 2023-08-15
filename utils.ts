@@ -26,12 +26,15 @@ export function readModuleDependencies(base_name: string = __dirname, isLocal = 
     let pkgJsonFilePath: string = path.join(base_name, "package.json");
 
     if (fs.existsSync(pkgJsonFilePath)) {
-        let { name, version, dependencies } = require(pkgJsonFilePath)
-        if (name && version) {
+        try{
+            let { name, version, dependencies } = require(pkgJsonFilePath)
+            if (name && version) {
 
-            isLocal ? localDependencies.set(name + "&" + version, { name, version, dependencies }) : globalDependencies.set(name + "&" + version, { name, version, dependencies });
+                isLocal ? localDependencies.set(name + "&" + version, { name, version, dependencies }) : globalDependencies.set(name + "&" + version, { name, version, dependencies });
+            }
+        }catch(e){
+            console.error(`${pkgJsonFilePath}解析有问题`);
         }
-
     }
     const dependencyList: string[] = fs.readdirSync(base_name);
     let packageConfig: DepConfObj;
@@ -100,12 +103,17 @@ export function getGlobalDepConfObj(packageName: string, version: string, isLoca
     return depConfObj;
 }
 
-export function getDepPkgVerList(isLocal = true): Object[] {
-    let mapList: Object[] = [];
+export interface DepPkgVer{
+    packageName:string;
+    version:string;
+}
+
+export function getDepPkgVerList(isLocal = true): DepPkgVer[] {
+    let mapList: DepPkgVer[] = [];
     let packageName: string = "";
     let version: string = "";
     let key: string = "";
-    let map: Object;
+    let map: DepPkgVer;
     for (key of Array.from((isLocal ? localDependencies.keys() : globalDependencies.keys()))) {
         packageName = key.split("&").at(0) as string;
         version = key.split("&").at(1) as string;

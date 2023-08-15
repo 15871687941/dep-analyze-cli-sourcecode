@@ -1,9 +1,8 @@
 import GraphByAdjacencyList from "./graph";
 import path from "path"
-import fs from "fs"
-import { getLocalDepConfObj, getGlobalDepConfObj, DepConfObj, dependencyInit } from "./utils";
-import { config } from "process";
-import { BlobOptions } from "buffer";
+import fs, { link } from "fs"
+import { getLocalDepConfObj, getGlobalDepConfObj, DepConfObj, dependencyInit, getDepPkgVerList, DepPkgVer} from "./utils";
+
 
 export default class DepAnalyze{
     // 依赖关系
@@ -208,20 +207,38 @@ export default class DepAnalyze{
         return this.isExistMulPack;
     }
 
+    getDepList():string[]{
+        let depList:DepPkgVer[] = getDepPkgVerList()
+        let depsString:string[] = [];
+        for(let index in depList){
+            const dep = depList[index];
+            depsString.push(`${depList[index]["packageName"]}:${depList[index].version}`);
+        }
+        depsString.sort();
+        return depsString;
+    }
+
     toObject():Object{
         if(!this.isExecInit || !this.isExecLoad){
             throw new Error("请先调用init和load方法");
         }
+        const links:object[] = [];
+        for(let source of this.depGraph.getNodes()){
+            for(let target of this.depGraph.getNeighbors(source) as string[] ){
+                links.push({source, target});
+            }
+        }
         return {
-            packageName: this.entryPackage, 
-            isLocalPackage: this.isLocal,
-            packageVersion: this.entryVersion, 
-            depGraph: this.depGraph.toObject(),
-            depth:this.depth,
+            entryPackageName: this.entryPackage,
+            entryVersion: this.entryVersion,
+            nodeCount: this.allDepList.length,
+            nodes: this.allDepList,
+            links:links,
+            depth: this.depth,
             isCircle: this.isCircle,
-            circcleDepList: this.circcleDepList,
-            isExistMulPack: this.isExistMulPack,
-            mulPackList:this.mulPackList, 
+            circleDepList: this.circcleDepList,
+            isMulPackage: this.isExistMulPack,
+            mulPackageList: this.mulPackList
         }
     }
 
