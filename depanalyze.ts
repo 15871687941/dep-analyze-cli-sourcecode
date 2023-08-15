@@ -242,12 +242,12 @@ export default class DepAnalyze{
         }
     }
 
-    save(filename:string="depanalyze.json"){
+    save(filename:string="./data/deplist.json"){
         if(!this.isExecInit || !this.isExecLoad){
             throw new Error("请先调用init和load方法");
         }
         const fullPath:string = path.join(__dirname, filename);
-        fs.writeFile(filename, JSON.stringify(this.toObject()), function(err){
+        fs.writeFile(filename, JSON.stringify(this.getDepList()), function(err){
             if(err){
                 console.log(err);
             }
