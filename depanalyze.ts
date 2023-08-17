@@ -1,6 +1,6 @@
 import GraphByAdjacencyList from "./graph";
 import path from "path"
-import fs, { link } from "fs"
+import fs from "fs"
 import { getLocalDepConfObj, getGlobalDepConfObj, DepConfObj, dependencyInit, getDepPkgVerList, DepPkgVer} from "./utils";
 
 
@@ -61,20 +61,20 @@ export default class DepAnalyze{
         this.isExecInit = true;
     }
 
-    load(entryPackage:string, entryVersion:string){
+    load(entryPackage:string, entryVersion:string, depthLimited:number){
         if(!this.isExecInit){
             throw new Error("请先执行init方法，初始化环境");
         }
         this.entryPackage = entryPackage;
         this.entryVersion = entryVersion;
-        this.readDepsGraph(entryPackage, entryVersion);
+        this.readDepsGraph(entryPackage, entryVersion, depthLimited);
         this.isExecLoad = true;
 
     }
 
     // 获取入口模块的依赖图
     // 深度优先遍历
-    private readDepsGraph(ep:string, ev:string){
+    private readDepsGraph(ep:string, ev:string, depthLimited:number){
         // 获取该模块对应版本的依赖对象{name:ep, version:ev, dependencies:{}}
         let depConfObj:DepConfObj = this.getDepConfigObj(ep, ev);
         // 构造节点 name&version
@@ -82,16 +82,20 @@ export default class DepAnalyze{
         
         // 添加节点
         this.depGraph.addNode(node);
+        depthLimited = depthLimited - 1;
         if(!this.allDepList.includes(node)){
             this.allDepList.push(node);
         }
         this.visited[this.allDepList.indexOf(node)] = true;
 
         this.helpQueue.push(node);
+        this.depth = this.helpQueue.length > this.depth?this.helpQueue.length: this.depth;
         // 检测是否为叶子节点
         if (depConfObj.dependencies === undefined){
-            this.depth = this.helpQueue.length > this.depth?this.helpQueue.length: this.depth;
             this.helpQueue.pop();
+            return;
+        }
+        if(depthLimited <= 0){
             return;
         }
         // 如果该模块有依赖对象，则遍历依赖对象，将每个依赖添加为节点，且添加该模块节点的邻接表
@@ -126,46 +130,48 @@ export default class DepAnalyze{
                 this.depth = this.helpQueue.length > this.depth?this.helpQueue.length: this.depth;
                 continue;
             }
+        
             // 解决多次访问一个节点的问题
             if(!this.visited[this.allDepList.indexOf(w)]){
-                this.readDepsGraph(w.split("&").at(0) as string, w.split("&").at(1) as string);
+                this.readDepsGraph(w.split("&").at(0) as string, w.split("&").at(1) as string, depthLimited);
             }   
         }
         this.helpQueue.pop();
-            
     }
-
-    // 层次遍历
-    // --depth
-    getOrderedDepthGraph(depth:number):GraphByAdjacencyList{
-        if(!this.isExecInit || !this.isExecLoad){
-            throw new Error("请先调用init和load方法");
-        }
-        if(depth >= this.depth){
-            return this.depGraph;
-        }
-        let orderedDepthGraph:GraphByAdjacencyList = new GraphByAdjacencyList();
-        let entryNode:string = this.entryPackage + "&" + this.entryVersion;
-        orderedDepthGraph.addNode(entryNode);
-        depth -= 1;
-        this.helpQueue.push(entryNode);
-        while(this.helpQueue.length !== 0 && depth > 0){
-            let len = this.helpQueue.length;
-            for(let i=0;i<len;i++){
-                const depNode = this.helpQueue.pop() as string;
-                this.depGraph.getNeighbors(depNode)?.forEach((item, index)=>{
-                    if(this.helpQueue.indexOf(item) < 0){
-                        this.helpQueue.push(item);
-                    }
-                    orderedDepthGraph.addNode(item);
-                    orderedDepthGraph.addEdge(depNode, item);
+    // // 层次遍历
+    // // --depth
+    // getOrderedDepthGraph(depth:number):GraphByAdjacencyList{
+    //     if(!this.isExecInit || !this.isExecLoad){
+    //         throw new Error("请先调用init和load方法");
+    //     }
+    //     if(depth >= this.depth || depth < 0){
+    //         depth = this.depth;
+    //     }
+    //     let orderedDepthGraph:GraphByAdjacencyList = new GraphByAdjacencyList();
+    //     let entryNode:string = this.entryPackage + "&" + this.entryVersion;
+    //     orderedDepthGraph.addNode(entryNode);
+    //     depth -= 1;
+    //     this.helpQueue.push(entryNode);
+    //     while(this.helpQueue.length !== 0 && depth > 0){
+    //         let len = this.helpQueue.length;
+    //         for(let i=0;i<len;i++){
+    //             const depNode = this.helpQueue.pop() as string;
+    //             this.depGraph.getNeighbors(depNode)?.forEach((item, index)=>{
+    //                 if(this.helpQueue.indexOf(item) < 0){
+    //                     this.helpQueue.push(item);
+    //                 }
+    //                 orderedDepthGraph.addNode(item);
+    //                 orderedDepthGraph.addEdge(depNode, item);
                     
-                });
-            }
-            depth -= 1;
-        }
-        return orderedDepthGraph;
-    }
+    //             });
+    //         }
+    //         depth -= 1;
+    //     }
+    //     if(!this.isExecInit || !this.isExecLoad){
+    //         throw new Error("请先调用init和load方法");
+    //     }
+    //     return orderedDepthGraph;
+    // }
 
     getDepth():number{
         if(!this.isExecInit || !this.isExecLoad){
@@ -218,21 +224,31 @@ export default class DepAnalyze{
         return depsString;
     }
 
-    toObject():Object{
+    toObject():object{
         if(!this.isExecInit || !this.isExecLoad){
             throw new Error("请先调用init和load方法");
         }
         const links:object[] = [];
+        const mapNodes:Map<string, number> = new Map();
+        mapNodes.set(`${this.entryPackage}&${this.entryVersion}`, 0);
         for(let source of this.depGraph.getNodes()){
             for(let target of this.depGraph.getNeighbors(source) as string[] ){
                 links.push({source, target});
+                if(mapNodes.has(target)){
+                    mapNodes.set(target, mapNodes.get(target) as number+1);
+                }else{
+                    mapNodes.set(target, 1);
+                }
             }
         }
+        const nodes:object[] = Array.from(mapNodes, ([key ,val])=>{
+            return {node: key, count: val};
+        });
         return {
             entryPackageName: this.entryPackage,
             entryVersion: this.entryVersion,
             nodeCount: this.allDepList.length,
-            nodes: this.allDepList,
+            nodes: nodes,
             links:links,
             depth: this.depth,
             isCircle: this.isCircle,
@@ -242,16 +258,20 @@ export default class DepAnalyze{
         }
     }
 
-    save(filename:string="./data/deplist.json"){
+    save(filePath:string="./data/depanalyze.json"){
         if(!this.isExecInit || !this.isExecLoad){
             throw new Error("请先调用init和load方法");
         }
-        const fullPath:string = path.join(__dirname, filename);
-        fs.writeFile(filename, JSON.stringify(this.getDepList()), function(err){
+        const parentPath:string = path.resolve(filePath, "..")
+        if(!fs.existsSync(parentPath)){
+            fs.mkdirSync(parentPath);
+        }
+        fs.writeFile(filePath, JSON.stringify(this.toObject()), function(err){
             if(err){
                 console.log(err);
+            }else{
+                console.log("保存成功");
             }
-            console.log("保存成功");
         });
     }
 }
@@ -265,5 +285,4 @@ export default class DepAnalyze{
 // console.log(depAnalyze.getOrderedDepthGraph(2));
 // depAnalyze.save();
 // console.log("first");
-
 

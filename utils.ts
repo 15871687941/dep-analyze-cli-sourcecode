@@ -16,7 +16,7 @@ export var localDependencies: Map<string, DepConfObj> = new Map();
 export var globalDependencies: Map<string, DepConfObj> = new Map();
 
 // 使用递归遍历算法，遍历给定目录下的所有依赖，并根据给定参数在相应列表中
-export function readModuleDependencies(base_name: string = __dirname, isLocal = true) {
+export function readModuleDependencies(base_name: string = process.cwd(), isLocal = true) {
     if (!fs.existsSync(base_name)) {
         return;
     }
@@ -33,7 +33,7 @@ export function readModuleDependencies(base_name: string = __dirname, isLocal = 
                 isLocal ? localDependencies.set(name + "&" + version, { name, version, dependencies }) : globalDependencies.set(name + "&" + version, { name, version, dependencies });
             }
         }catch(e){
-            console.error(`${pkgJsonFilePath}解析有问题`);
+            console.error(`Warning:${pkgJsonFilePath}解析有问题，已忽略！`);
         }
     }
     const dependencyList: string[] = fs.readdirSync(base_name);
@@ -71,8 +71,6 @@ export function getLocalDepConfObj(packageName: string, version: string, isLocal
         }
     }
     if (depConfObj.name === "" && depConfObj.version === "") {
-        console.log(depConfObj)
-        console.log(packageName, version);
         throw new Error("该版本的模块不存在，请使用npm list [-g]查看所安装的模块");
     }
     return depConfObj;
