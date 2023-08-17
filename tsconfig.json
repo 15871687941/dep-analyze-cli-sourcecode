@@ -10,7 +10,7 @@
       // 用于处理在使用不同模块系统（如 CommonJS 和 ES 模块）之间进行交互时可能出现的一些兼容性问题。
       "esModuleInterop": true,
       // 编译后的输出目录
-      "outDir": "dist",
+      "outDir": "../packagedepgraph-use",
       // 项目根目录
       "rootDir": "./",
       // 严格模式

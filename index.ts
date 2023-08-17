@@ -57,12 +57,12 @@ try{
                     pkg = name;
                     ver =version;
                 }else{
-                    throw new Error("请在nodejs项目根路径下执行[analyze-cli]命令")
+                    throw new Error("Error:请在nodejs项目根路径下执行[analyze-cli]命令")
                 }
-            }else if(pkg !== "" && ver ===""){
+            }else if(pkg !== "" && ver !==""){
             
             }else{
-                throw new Error("命令格式--package选项和--version选项必须一起不出现或者一起出现");
+                throw new Error("Error:命令格式--package选项和--version选项必须一起不出现或者一起出现");
             }
             
             let depConfObj:DepConfObj = getLocalDepConfObj(pkg, ver);
