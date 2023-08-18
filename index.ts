@@ -1,6 +1,4 @@
-#!/usr/bin/env node
-import {isPortOpen, run_server} from "./server";
-import { depAnalyze } from "./server";
+import {isPortOpen, run_server, depAnalyze} from "./server";
 import { getLocalDepConfObj, DepConfObj } from "./utils";
 import fs from "fs";
 import path from "path";
@@ -88,7 +86,7 @@ try{
             }
             
             let depConfObj:DepConfObj = getLocalDepConfObj(pkg, ver);
-                
+            
             depAnalyze.load(depConfObj.name, depConfObj.version, depth);
             
             console.log(depAnalyze.toObject());

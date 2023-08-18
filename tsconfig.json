@@ -18,13 +18,14 @@
     },
     // 需要被编译的文件或目录的匹配模式
     "include": [
-      "./**/*.ts",
-      "./"
+      "/**/*.ts",
     ],
     // 需要排除在编译之外的文件或文件夹的匹配模式
     "exclude": [
       "./.vscode",
       "./.gitignore",
+      "./node_modules",
+      "./tsconfig.json"
     ]
 }
   
