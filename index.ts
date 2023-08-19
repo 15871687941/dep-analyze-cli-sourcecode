@@ -2,6 +2,7 @@ import {isPortOpen, run_server, depAnalyze} from "./server";
 import { getLocalDepConfObj, DepConfObj } from "./utils";
 import fs from "fs";
 import path from "path";
+import { consoleStyle } from "./consolestyle";
 
 // 判断端口是否被占用，没有被占用则打开服务器，被占用则不执行
 isPortOpen().then((isOpen:boolean)=>{
@@ -39,7 +40,9 @@ Arguments:
   analyze        analyze a package's dependencies with the version information
 
 Examples:
-  pkg-cli help || pkg-cli || pkg-cli analyze -h       Display help information
+  pkg-cli                                             Run a server to graphically display dependency information of the current project
+  pkg-cli help || || pkg-cli analyze -h               Display help information
+  pkg-cli runserver                                   Run a server to graphically display dependency information of the current project
   pkg-cli analyze                                     Display dependency information of the current package
   pkg-cli analyze -p=test -v=1.0.0                    Display dependency information of the package test@1.0.0
   pkg-cli analyze -d=4                                Display The first four levels dependency information of the current package
@@ -47,7 +50,19 @@ Examples:
   \n`;
 
 try{
-    if(process.argv[2] === "help" || process.argv.slice(2).length === 0){
+    if(process.argv.slice(2).length === 0){
+
+    }else if(process.argv[2] === "runserver"){
+        // 判断端口是否被占用，没有被占用则打开服务器，被占用则不执行
+        isPortOpen().then((isOpen:boolean)=>{
+            if(isOpen){
+                run_server();
+            }
+        }).catch((err:Error)=>{
+            console.error(err);
+        })
+    }
+    else if(process.argv[2] === "help"){
         console.log(helpInfo);
     }else if(process.argv[2] === "analyze"){
         const argv = process.argv.slice(3);
@@ -89,7 +104,7 @@ try{
             
             depAnalyze.load(depConfObj.name, depConfObj.version, depth);
             
-            console.log(depAnalyze.toObject());
+            console.log(depAnalyze.toSimpleObject());
             
             if(jsonPath!==""){
                 if(jsonPath.endsWith(".json")){

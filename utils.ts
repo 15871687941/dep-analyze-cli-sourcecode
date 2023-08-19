@@ -27,13 +27,19 @@ export function readModuleDependencies(base_name: string = process.cwd(), isLoca
 
     if (fs.existsSync(pkgJsonFilePath)) {
         try{
+            // 一般本项目的依赖包的开发依赖都不会安装，所以使用devDependencies没有意义
             let { name, version, dependencies } = require(pkgJsonFilePath)
+            // let {name, version, devDependencies} = require(pkgJsonFilePath);
+            // if(name==="packagedepgraph"){
+            //     console.log(name, version, devDependencies);
+            // } 
+            
             if (name && version) {
 
-                isLocal ? localDependencies.set(name + "&" + version, { name, version, dependencies }) : globalDependencies.set(name + "&" + version, { name, version, dependencies });
+                isLocal ? localDependencies.set(name + "&" + version, { name, version, dependencies}) : globalDependencies.set(name + "&" + version, { name, version, dependencies });
             }
         }catch(e){
-            console.error(`Warning:${pkgJsonFilePath}解析有问题，已忽略！`);
+            // console.error(`Warning:${pkgJsonFilePath}解析有问题，已忽略！`);
         }
     }
     const dependencyList: string[] = fs.readdirSync(base_name);
@@ -53,6 +59,7 @@ export function dependencyInit() {
 
 // 给定参数满足语义化版本规范就可以了
 export function getLocalDepConfObj(packageName: string, version: string, isLocal:boolean=true): DepConfObj {
+    
     let depConfObj: DepConfObj = { "name": "", "version": "", "dependencies": undefined };
     let key: string = "";
     const fullPackage = analyseVersion(packageName, version);
@@ -71,6 +78,7 @@ export function getLocalDepConfObj(packageName: string, version: string, isLocal
         }
     }
     if (depConfObj.name === "" && depConfObj.version === "") {
+        // console.log(packageName, version)
         throw new Error("该版本的模块不存在，请使用npm list [-g]查看所安装的模块");
     }
     return depConfObj;

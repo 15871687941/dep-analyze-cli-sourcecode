@@ -235,7 +235,7 @@ export default class DepAnalyze{
             for(let target of this.depGraph.getNeighbors(source) as string[] ){
                 links.push({source, target});
                 if(mapNodes.has(target)){
-                    mapNodes.set(target, mapNodes.get(target) as number+1);
+                    mapNodes.set(target, (mapNodes.get(target) as number)+1);
                 }else{
                     mapNodes.set(target, 1);
                 }
@@ -251,6 +251,22 @@ export default class DepAnalyze{
             nodeCount: this.allDepList.length,
             nodes: nodes,
             links:links,
+            depth: this.depth,
+            isCircle: this.isCircle,
+            circleDepList: this.circcleDepList,
+            isMulPackage: this.isExistMulPack,
+            mulPackageList: this.mulPackList
+        }
+    }
+
+    toSimpleObject():object{
+        if(!this.isExecInit || !this.isExecLoad){
+            throw new Error("请先调用init和load方法");
+        }
+        return {
+            entryPackageName: this.entryPackage,
+            entryVersion: this.entryVersion,
+            nodeCount: this.allDepList.length,
             depth: this.depth,
             isCircle: this.isCircle,
             circleDepList: this.circcleDepList,

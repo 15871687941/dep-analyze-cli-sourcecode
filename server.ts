@@ -2,6 +2,7 @@ import express from "express"
 import DepAnalyze from "./depanalyze"
 import net from "net"
 import path from "path"
+import {consoleStyle} from "./consolestyle"
 
 export const default_port = 50000;
 export let depAnalyze = new DepAnalyze();
@@ -13,6 +14,7 @@ export function isPortOpen(port: number=default_port): Promise<boolean> {
 
     server.once('error', (err: Error) => {
       if ((err as any).code === 'EADDRINUSE') {
+        console.log(`Warning: ${consoleStyle.red}Server[http:127.0.0.1:50000] is running, please don't execute command[pkg-cli runserver]${consoleStyle.endStyle}`)
         resolve(false); // 端口被占用
       } else {
         reject(err); // 其他错误
@@ -80,7 +82,48 @@ export  function run_server(port:number=default_port){
         
     })
 
+    app.get("/depgraph-simple/:dep/:depth?", (res,rep)=>{
+      let depObj:object = {}
+      let depth:number | string = res.params.depth || "-1";
+      depth = parseInt(depth) as number;
+      if(depth < 0){
+          depth = Infinity;
+      }
+      console.log(depth);
+      if(res.params.dep === "default"){
+          let {name, version} = require(path.join(process.cwd(), "package.json"));
+          depAnalyze = new DepAnalyze();
+          depAnalyze.init();
+          depAnalyze.load(name, version, depth);
+          depObj = depAnalyze.toSimpleObject();
+          rep.json(depObj);
+      }else{
+          try{
+              depAnalyze = new DepAnalyze();
+              depAnalyze.init();
+              let [name, version] = res.params.dep.split("&");
+              depAnalyze.load(name, version, depth);
+              depObj = depAnalyze.toSimpleObject();
+              rep.json(depObj);
+          }catch(e){
+              
+          }   
+      }
+      
+  })
+
+    
+
     app.listen(default_port, ()=>{
-        console.log(`starting a server of http://localhost:${default_port}`);
+        // console.log(`
+        //  _____ _   ___                         
+        // |     | |_|_  |___ ___ ___ ___ ___ ___ 
+        // |   --|   |_  |   |   |   |   |   |   |
+        // |_____|_|_|___|_|_|_|_|_|_|_|_|_|_|_|_|
+         
+        //            折腾不息 · 乐此不疲. `)
+        console.log("Starting to run a server...");
+        console.log(`Local:   %shttp://127.0.0.1:${default_port}%s`, consoleStyle.green, consoleStyle.endStyle);
+        console.log(`Function:${consoleStyle.blue}graphically display the current project dependencies information${consoleStyle.endStyle}`);
     })
 }
