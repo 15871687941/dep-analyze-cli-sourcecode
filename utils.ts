@@ -128,3 +128,49 @@ export function getDepPkgVerList(isLocal = true): DepPkgVer[] {
     }
     return mapList;
 }
+
+function checkVersion(){
+    readModuleDependencies();
+    let key:string = "";
+    let depConfObj:DepConfObj;
+    for(key of localDependencies.keys()){
+        depConfObj = localDependencies.get(key) as DepConfObj;
+        let dependencies:{[key:string]:string} = depConfObj["dependencies"] as {[key:string]:string};
+        let k1:string="";
+        for(k1 in dependencies){
+            let pattern:RegExp = /^[\^\~]?\d{1,}\.\d{1,}\.\d{1,}$/
+            let version:string = dependencies[k1];
+            if(!pattern.test(version)){
+                console.log(depConfObj)
+                console.log(k1, version);
+            }
+        }
+    }
+}
+
+// checkVersion();
+/*
+
+npm:string-width@^4.2.0
+npm:strip-ansi@^6.0.1
+npm:wrap-ansi@^7.0.0
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+^1
+*
+*
+*
+*
+^5.0.0 || ^6.0.2 || ^7.0.0
+>= 2.1.2 < 3
+^9.1.1 || ^10.0.0
+^5.0.0 || ^6.0.2 || ^7.0.0
+*/
