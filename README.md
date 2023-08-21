@@ -1,12 +1,15 @@
 ```mermaid
 graph
-    A-->B
-    A-->C
-    A-->D
-    B-->E
-    C-->F
-    D-->G
-    E-->H
-    G-->H
-    H-->A
+    packagedepgraph&1.0.0-->express&4.18.2
+    packagedepgraph&1.0.0-->B&1.0.0
+    B&1.0.0-->C&1.0.0
+    B&1.0.0-->D&1.0.0
+    C&1.0.0-->B&1.0.0
+    D&1.0.0-->packagedepgraph&1.0.0
+    D&1.0.0-->B&2.0.0
+    B&2.0.0-->C&1.0.0
+    B&2.0.0-->D&1.0.0
+
+
+
 ```
