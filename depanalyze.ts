@@ -65,11 +65,28 @@ export default class DepAnalyze{
         if(!this.isExecInit){
             throw new Error("请先执行init方法，初始化环境");
         }
+        this.isExecLoad = true;
+        this.clear();
         this.entryPackage = entryPackage;
         this.entryVersion = entryVersion;
         this.readDepsGraph(entryPackage, entryVersion, depthLimited);
-        this.isExecLoad = true;
+        // this.depth += 1;
+        // console.log(this.toObject());
 
+    }
+
+    clear(){
+        this.depGraph = new GraphByAdjacencyList();
+        this.depth = 0;
+        this.entryPackage = ""
+        this.entryVersion = "";
+        this.isCircle = false;
+        this.circcleDepList = [];
+        this.isExistMulPack = false;
+        this.mulPackList = [];
+        this.helpQueue = [];
+        this.allDepList  = [];
+        this.visited = [];
     }
 
     // 获取入口模块的依赖图
@@ -85,14 +102,18 @@ export default class DepAnalyze{
         
         // 添加节点
         this.depGraph.addNode(node);
-        depthLimited = depthLimited - 1;
         if(!this.allDepList.includes(node)){
             this.allDepList.push(node);
         }
-        this.visited[this.allDepList.indexOf(node)] = true;
-
         this.helpQueue.push(node);
         this.depth = this.helpQueue.length > this.depth?this.helpQueue.length: this.depth;
+        this.visited[this.allDepList.indexOf(node)] = true;
+        depthLimited = depthLimited - 1;
+        if(depthLimited <= 0){
+            this.helpQueue.pop();
+            return;
+        }
+        
         // 检测是否为叶子节点
         if (depConfObj.dependencies === undefined){
             this.helpQueue.pop();
@@ -110,8 +131,8 @@ export default class DepAnalyze{
             depConfObj1 = this.getDepConfigObj(depName, verName) as DepConfObj;
             depNode = depConfObj1.name + "&" + depConfObj1.version;
             this.depGraph.addNode(depNode);
-            if(!this.allDepList.includes(node)){
-                this.allDepList.push(node);
+            if(!this.allDepList.includes(depNode)){
+                this.allDepList.push(depNode);
             }
             this.depGraph.addEdge(node, depNode)
             
@@ -127,7 +148,6 @@ export default class DepAnalyze{
                 const circleDep = this.helpQueue.slice(startIndex);
                 this.circcleDepList.push(circleDep);
                 this.helpQueue.pop();
-                this.depth = this.helpQueue.length > this.depth?this.helpQueue.length: this.depth;
                 continue;
             }
         
@@ -225,6 +245,7 @@ export default class DepAnalyze{
     }
 
     toObject():object{
+        // console.log(this.depGraph);
         if(!this.isExecInit || !this.isExecLoad){
             throw new Error("请先调用init和load方法");
         }
@@ -244,7 +265,6 @@ export default class DepAnalyze{
         const nodes:object[] = Array.from(mapNodes, ([key ,val])=>{
             return {name: key, count: val};
         });
-        this.depGraph = new GraphByAdjacencyList();
         return {
             entryPackageName: this.entryPackage,
             entryVersion: this.entryVersion,
@@ -298,8 +318,8 @@ export default class DepAnalyze{
 // // "acorn", "8.10.0" 1
 // // "glob", "10.3.3"
 // // "express","4.18.2"
-// depAnalyze.load("glob", "10.3.3");
-// console.log(depAnalyze.getOrderedDepthGraph(2));
+// depAnalyze.load("packagedepgraph", "1.0.0", 4);
+// console.log(depAnalyze.toSimpleObject());
 // depAnalyze.save();
 // console.log("first");
 

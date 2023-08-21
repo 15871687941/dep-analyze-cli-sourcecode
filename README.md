@@ -1,10 +1,12 @@
-
 ```mermaid
-graph LR
-A--> B
-A--> C
-B--> D
-C--> D
-D--> E
-E--> A
+graph
+    A-->B
+    A-->C
+    A-->D
+    B-->E
+    C-->F
+    D-->G
+    E-->H
+    G-->H
+    H-->A
 ```

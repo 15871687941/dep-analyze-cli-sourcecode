@@ -8,6 +8,9 @@ export const default_port = 50000;
 export let depAnalyze = new DepAnalyze();
 depAnalyze.init();
 
+let firstRequestDepth:number = Infinity;
+let firstRequest:number = 1;
+
 export function isPortOpen(port: number=default_port): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
@@ -44,8 +47,6 @@ export  function run_server(port:number=default_port){
 
     // https://localhost:50000/deplist
     app.get("/deplist", (res,rep)=>{
-        depAnalyze = new DepAnalyze();
-        depAnalyze.init();
         const depList = depAnalyze.getDepList();
         rep.json(depList);
     });
@@ -56,21 +57,33 @@ export  function run_server(port:number=default_port){
         let depObj:object = {}
         let depth:number | string = res.params.depth || "-1";
         depth = parseInt(depth) as number;
-        if(depth < 0){
-            depth = Infinity;
+        // console.log(depth)
+
+        if(depth <= 0){
+          depth = Infinity;
         }
-        console.log(depth);
         if(res.params.dep === "default"){
+            if(firstRequest === 1){
+              // console.log(process.argv);
+              process.argv.forEach((item, index)=>{
+                if(item.startsWith("--depth=") || item.startsWith("-d=")){
+                  firstRequestDepth = parseInt(item.split("=")[1]);
+                  if(firstRequestDepth <= 0){
+                    firstRequestDepth = Infinity;
+                  }
+                  
+                }
+              })
+              firstRequest = firstRequest - 1;
+            }
+            // console.log(firstRequestDepth);
+            depth = firstRequestDepth;
             let {name, version} = require(path.join(process.cwd(), "package.json"));
-            depAnalyze = new DepAnalyze();
-            depAnalyze.init();
             depAnalyze.load(name, version, depth);
             depObj = depAnalyze.toObject();
             rep.json(depObj);
         }else{
             try{
-                depAnalyze = new DepAnalyze();
-                depAnalyze.init();
                 let [name, version] = res.params.dep.split("&");
                 depAnalyze.load(name, version, depth);
                 depObj = depAnalyze.toObject();
@@ -86,21 +99,16 @@ export  function run_server(port:number=default_port){
       let depObj:object = {}
       let depth:number | string = res.params.depth || "-1";
       depth = parseInt(depth) as number;
-      if(depth < 0){
+      if(depth <= 0){
           depth = Infinity;
       }
-      console.log(depth);
       if(res.params.dep === "default"){
           let {name, version} = require(path.join(process.cwd(), "package.json"));
-          depAnalyze = new DepAnalyze();
-          depAnalyze.init();
           depAnalyze.load(name, version, depth);
           depObj = depAnalyze.toSimpleObject();
           rep.json(depObj);
       }else{
           try{
-              depAnalyze = new DepAnalyze();
-              depAnalyze.init();
               let [name, version] = res.params.dep.split("&");
               depAnalyze.load(name, version, depth);
               depObj = depAnalyze.toSimpleObject();
