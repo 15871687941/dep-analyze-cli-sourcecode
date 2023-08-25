@@ -25,7 +25,8 @@
       "./.vscode",
       "./.gitignore",
       "./node_modules",
-      "./tsconfig.json"
+      "./tsconfig.json",
+      "./test"
     ]
 }
   

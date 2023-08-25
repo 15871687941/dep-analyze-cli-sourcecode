@@ -6,21 +6,23 @@ dep-analyze-cli
 ## 功能特点
 + 分析并输出当前项目生产环境依赖关系
 + 前端可视化展示当前项目生产环境依赖关系、是否存在循环依赖以及是否存在多个相同包名不同版本号的依赖等信息
-+ 可以指定参数分析输出当前项目下任意依赖包的依赖关系
++ 可以指定参数分析输出当前项目下任意依赖包生产依赖关系
 
 ## 技术栈
 + prettier + eslint + lint-staged + husky
 + typescript + express + vue + D3
++ vitest
 + datastructure:graph
 
-## 安装和使用
+## 安装方式
 1. 在安装dep-analyze-cli工具之前，必须确保已经安装了[nodejs](https://nodejs.cn/download/)
 2. 本项目已经发布到npm上，可以直接使用npm安装。
 全局安装：<code>npm install dep-analyze-cli -g</code>
 本地安装：<code>npm install dep-analyze-cli</code>
-3. 全局安装方式，在windows下可以直接使用，在linux下必须要找到dep-analyze-cli路径，并将其链接到/usr/bin/下。
-4. 本地安装方式，可以在当前项目控制台中输出./node_moduels/.bin/dep-analyze-cli使用该工具，也可以在package.json中构造命令脚本。
-5. 使用方式
+## 使用方式
+1. 全局安装方式，在windows下可以直接使用，在linux下必须要找到dep-analyze-cli路径，并将其链接到/usr/bin/下。
+2. 本地安装方式，可以在当前项目控制台中输出./node_moduels/.bin/dep-analyze-cli使用该工具，也可以在package.json中构造命令脚本。
+3. 使用描述
 ```
 Usage: dep-analyze-cli [arguments] [options] 
 
@@ -46,5 +48,5 @@ Examples:
   dep-analyze-cli analyze -d=4                                                Display The first four levels dependency information of the current package with a server
   dep-analyze-cli analyze -j=./data/save.json                                 Save dependency information of the current package with a server
 ```
-## 示例
+## 演示
 [Ubuntu下演示视频]()
