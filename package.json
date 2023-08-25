@@ -1,7 +1,7 @@
 {
   "name": "dep-analyze-cli",
   "version": "1.0.0",
-  "description": "list all the deps of the package",
+  "description": "display dependency information of the package and run a server to graphical display",
   "main": "./index.js",
   "scripts": {
     "start": "ts-node ./index.ts analyze",
@@ -47,5 +47,5 @@
     "typescript": "^5.1.6",
     "vitest": "^0.34.3"
   },
-  "keywords": []
+  "keywords": ["package", "analyze", "dependencies", "graphical display"]
 }
