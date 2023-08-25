@@ -123,13 +123,6 @@ export function run_server(port: number = default_port) {
     });
 
     app.listen(port, () => {
-    // console.log(`
-    //  _____ _   ___
-    // |     | |_|_  |___ ___ ___ ___ ___ ___
-    // |   --|   |_  |   |   |   |   |   |   |
-    // |_____|_|_|___|_|_|_|_|_|_|_|_|_|_|_|_|
-
-        //            折腾不息 · 乐此不疲. `)
         console.log('Starting to run a server...');
         console.log(
             `Local:   %shttp://127.0.0.1:${port}%s`,
