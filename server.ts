@@ -18,7 +18,7 @@ export function isPortOpen(port: number = default_port): Promise<boolean> {
         server.once('error', (err: Error) => {
             if ((err as any).code === 'EADDRINUSE') {
                 console.log(
-                    `Warning: ${consoleStyle.red}Server[http:127.0.0.1:50000] is running, please don't execute command[pkg-cli runserver]${consoleStyle.endStyle}`,
+                    // `Warning: ${consoleStyle.red}Server[http:127.0.0.1:50000] is running, please don't execute command[pkg-cli runserver]${consoleStyle.endStyle}`,
                 );
                 resolve(false); // 端口被占用
             } else {

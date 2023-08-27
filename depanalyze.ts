@@ -105,6 +105,9 @@ export default class DepAnalyze {
         }
         // 获取该模块对应版本的依赖对象{name:ep, version:ev, dependencies:{}}
         const depConfObj: DepConfObj = this.getDepConfigObj(ep, ev);
+        if(depConfObj.name === this.entryPackage && depConfObj.version !== this.entryVersion){
+            this.entryVersion = depConfObj.version;
+        }
         // 构造节点 name&version
         const node: string = depConfObj.name + '&' + depConfObj.version;
 
