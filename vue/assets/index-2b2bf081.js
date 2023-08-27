@@ -55,7 +55,7 @@ var __async = (__this, __arguments, generator) => {
   });
 };
 var require_index_001 = __commonJS({
-  "assets/index-0a3533b2.js"(exports, module) {
+  "assets/index-2b2bf081.js"(exports, module) {
     (function polyfill() {
       const relList = document.createElement("link").relList;
       if (relList && relList.supports && relList.supports("modulepreload")) {
@@ -34568,7 +34568,7 @@ var require_index_001 = __commonJS({
     const elOption = "";
     const elOptionGroup = "";
     const elSelect = "";
-    const _withScopeId$1 = (n) => (pushScopeId("data-v-97d7575b"), n = n(), popScopeId(), n);
+    const _withScopeId$1 = (n) => (pushScopeId("data-v-74fed4cb"), n = n(), popScopeId(), n);
     const _hoisted_1$1 = { key: 0 };
     const _hoisted_2$1 = {
       key: 0,
@@ -34834,9 +34834,9 @@ var require_index_001 = __commonJS({
         };
       }
     });
-    const ProjectDetail_vue_vue_type_style_index_0_scoped_97d7575b_lang = "";
-    const ProjectDetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-97d7575b"]]);
-    const _withScopeId = (n) => (pushScopeId("data-v-15d2b476"), n = n(), popScopeId(), n);
+    const ProjectDetail_vue_vue_type_style_index_0_scoped_74fed4cb_lang = "";
+    const ProjectDetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-74fed4cb"]]);
+    const _withScopeId = (n) => (pushScopeId("data-v-cc4f6a6a"), n = n(), popScopeId(), n);
     const _hoisted_1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("h1", null, "Dep-Analyze-Cli Insights", -1));
     const _hoisted_2 = { class: "search-box" };
     const _hoisted_3 = { class: "switch-box" };
@@ -34939,8 +34939,8 @@ var require_index_001 = __commonJS({
           });
         }));
         function render2(data2) {
-          const svg = select$1("svg");
-          const container = svg.append("g");
+          const svg2 = select$1("svg");
+          const container = svg2.append("g");
           const width = parseInt(window.getComputedStyle(mainSvgRef.value).width);
           const height = parseInt(window.getComputedStyle(mainSvgRef.value).height);
           container.attr("viewBox", `0 0 ${width} ${height}`);
@@ -34959,7 +34959,7 @@ var require_index_001 = __commonJS({
           const tip = d3tip().attr("class", "d3-tip").html(
             (event, d) => `<span style="${tipStyle}">${d.name}</span>`
           );
-          svg.call(tip);
+          svg2.call(tip);
           const link$1 = container.append("g").attr("fill", "none").attr("stroke-width", 1).selectAll("path").data(links).join("path").attr("stroke", "gray").attr("marker-end", "url(#triangle-gray)");
           const node = container.append("g").attr("stroke-linecap", "round").attr("stroke-linejoin", "round").selectAll("g").data(nodes).join("g").call(drag$1(simulation$1));
           const handleClickNode = (event) => {
@@ -34968,7 +34968,7 @@ var require_index_001 = __commonJS({
             const circle = select$1(_name);
             const r = circle.attr("r");
             circle.transition().duration(100).attr("r", 4).transition().duration(100).attr("r", r);
-            if (!isLocalFile) {
+            if (!isLocalFile.value) {
               getNodeDetail(sourceName).then((resp) => {
                 nodeDetail.value = __spreadValues({}, resp);
               });
@@ -35006,7 +35006,7 @@ var require_index_001 = __commonJS({
               }
             }
           }
-          node.append("circle").attr("stroke", "white").attr("stroke-width", 1.5).attr("r", (d) => 6 + d.count % 10).attr("fill", (d) => color2(Math.random() * 100)).attr("id", (d) => d.name.replace(/[^a-zA-Z0-9]/g, "")).on("click", handleClickNode).on("contextmenu", (e3) => {
+          node.append("circle").attr("stroke", "white").attr("stroke-width", 1.5).attr("r", (d) => 5.5 + d.count % 7).attr("fill", (d) => color2(Math.random() * 100)).attr("id", (d) => d.name.replace(/[^a-zA-Z0-9]/g, "")).on("click", handleClickNode).on("contextmenu", (e3) => {
             e3.preventDefault();
             container.append("polygon ").attr("points", "65,5 100,35 85,75 35,75 20,35").attr("fill", "red");
           }).on("mouseover", tip.show).on("mouseout", tip.hide);
@@ -35020,7 +35020,7 @@ var require_index_001 = __commonJS({
           let zoom$1 = zoom().scaleExtent([0.1, 10]).on("zoom", (e3) => {
             container.attr("transform", e3.transform);
           });
-          svg.call(zoom$1).call(zoom$1.transform, identity.scale(1));
+          svg2.call(zoom$1).call(zoom$1.transform, identity.scale(1));
           simulation$1.on("tick", () => {
             link$1.attr("d", linkArc);
             node.attr(
@@ -35071,7 +35071,7 @@ var require_index_001 = __commonJS({
               previousTaget.attr("r", previousRadius);
             }
             const name = "#" + packageName.replace(/[^a-zA-Z0-9]/g, "");
-            const circle = svg.select(name);
+            const circle = svg2.select(name);
             const r = circle.attr("r");
             previousTaget = circle;
             previousRadius = r;
@@ -35080,9 +35080,9 @@ var require_index_001 = __commonJS({
                 "transform",
                 `translate(${width / 2 - x2}, ${height / 2 - y2}) scale(1)`
               );
-              svg.node().__zoom.k = 1;
-              svg.node().__zoom.x = width / 2 - x2;
-              svg.node().__zoom.y = height / 2 - y2;
+              svg2.node().__zoom.k = 1;
+              svg2.node().__zoom.x = width / 2 - x2;
+              svg2.node().__zoom.y = height / 2 - y2;
             }
             if (isRootPoint)
               return;
@@ -35110,7 +35110,7 @@ var require_index_001 = __commonJS({
           graph.hightlightLinks(packageName);
           const { x: x2, y: y2 } = graph.getNodePositionByName(packageName);
           graph.scaleAndCenterNode(packageName, x2, y2);
-          if (!isLocalFile) {
+          if (!isLocalFile.value) {
             getNodeDetail(packageName).then((resp) => {
               nodeDetail.value = __spreadValues({}, resp);
             });
@@ -35227,11 +35227,12 @@ var require_index_001 = __commonJS({
         const reLoad = () => {
           selectAll("g").remove();
           loading.value = true;
-          const svg = select$1("svg");
-          svg.node().__zoom.k = 1;
-          svg.node().__zoom.x = 0;
-          svg.node().__zoom.y = 0;
+          const svg2 = select$1("svg");
+          svg2.node().__zoom.k = 1;
+          svg2.node().__zoom.x = 0;
+          svg2.node().__zoom.y = 0;
           nodeDetail.value.entryPackageName = "";
+          searchKeyWords.value = "";
         };
         return (_ctx, _cache) => {
           const _component_el_header = ElHeader;
@@ -35412,8 +35413,8 @@ var require_index_001 = __commonJS({
         };
       }
     });
-    const App_vue_vue_type_style_index_0_scoped_15d2b476_lang = "";
-    const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-15d2b476"]]);
+    const App_vue_vue_type_style_index_0_scoped_cc4f6a6a_lang = "";
+    const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-cc4f6a6a"]]);
     const index = "";
     createApp(App).mount("#app");
   }
