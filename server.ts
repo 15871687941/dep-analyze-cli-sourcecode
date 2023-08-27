@@ -35,7 +35,7 @@ export function isPortOpen(port: number = default_port): Promise<boolean> {
     });
 }
 
-export function run_server(port: number = default_port) {
+export function run_server(pkgName:string="", ver:string="", port: number = default_port) {
     const app = express();
     app.use(express.static(path.join(__dirname, 'vue')));
 
@@ -77,15 +77,24 @@ export function run_server(port: number = default_port) {
                 }
                 // console.log(firstRequestDepth);
                 depth = firstRequestDepth;
-                const { name, version } = require(path.join(
+                let { name, version } = require(path.join(
                     process.cwd(),
                     'package.json',
                 ));
+                if(pkgName !== "" && ver !== ""){
+                    name = pkgName;
+                    version = ver;
+                }
+                // console.log(name ,version);
                 depAnalyze.load(name, version, depth);
                 depObj = depAnalyze.toObject();
                 rep.json(depObj);
             } else {
-                const [name, version] = res.params.dep.split('&');
+                let [name, version] = res.params.dep.split('&');
+                if(pkgName !== "" && ver !== ""){
+                    name = pkgName;
+                    version = ver;
+                }
                 depAnalyze.load(name, version, depth);
                 depObj = depAnalyze.toObject();
                 rep.json(depObj);

@@ -97,6 +97,16 @@ try {
                 }
             } else if (pkg !== '' && ver !== '') {
                 // pkg !== "" && ver !=="";
+                // 判断端口是否被占用，没有被占用则打开服务器，被占用则不执行
+                isPortOpen()
+                .then((isOpen: boolean) => {
+                    if (isOpen) {
+                        run_server(pkg, ver);
+                    }
+                })
+                .catch((err: Error) => {
+                    console.error(err);
+                });
             } else {
                 throw new Error(
                     'Error:命令格式--package选项和--version选项必须一起出现或者一起不出现',

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { analyseVersion, isEqualVersion } from './versionmanage';
+// import { consoleStyle } from './consolestyle';
 
 // 从package.json文件中提取需要的三个属性
 export interface DepConfObj {
@@ -108,13 +109,14 @@ export function getLocalDepConfObj(
                 depConfObj = (isLocal ? localDependencies : globalDependencies).get(
                     key,
                 ) as DepConfObj;
+                // console.error(`${consoleStyle.red}${packageName}:${version} 该版本的模块不存在，正在返回相同模块名而版本号不同的数据${consoleStyle.endStyle}`);
                 break;
             }
         }
         if (depConfObj.name === '' && depConfObj.version === '') {
             // console.log(packageName, version)
             throw new Error(
-                '该版本的模块不存在，请使用npm list [-g]查看所安装的模块',
+                `${packageName} 该模块不存在，请使用npm list [-g]查看所安装的模块`,
             );
         }
     }
@@ -161,13 +163,14 @@ export function getGlobalDepConfObj(
                 depConfObj = (isLocal ? localDependencies : globalDependencies).get(
                     key,
                 ) as DepConfObj;
+                // console.error(`${consoleStyle.red}${packageName}:${version} 该版本的模块不存在，正在返回相同模块名而版本号不同的数据${consoleStyle.endStyle}`);
                 break;
             }
         }
         if (depConfObj.name === '' && depConfObj.version === '') {
             // console.log(packageName, version)
             throw new Error(
-                '该版本的模块不存在，请使用npm list [-g]查看所安装的模块',
+                `${packageName} 该模块不存在，请使用npm list [-g]查看所安装的模块`,
             );
         }
     }

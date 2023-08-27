@@ -19,7 +19,7 @@ describe('API Tests', () => {
     });
     test("run_server should start the server and listen on the specified port", async () => {
         const port = 50000;
-        const server = run_server(port);
+        const server = run_server("", "", port);
       
         // 检查服务器是否正在监听指定的端口
         const result = await isPortOpen(port);
