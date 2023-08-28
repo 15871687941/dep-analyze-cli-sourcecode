@@ -71,8 +71,6 @@ export function isEqualVersion(
     pk2: string,
     v2: string,
 ): boolean {
-    const fullPackage1: FullPackage = analyseVersion(pk1, v1);
-    const fullPackage2: FullPackage = analyseVersion(pk2, v2);
     if (pk1 !== pk2) {
         return false;
     }
@@ -100,6 +98,9 @@ export function isEqualVersion(
     if (semver.satisfies(v1, v2)) {
         return true;
     }
+    const fullPackage1: FullPackage = analyseVersion(pk1, v1);
+    const fullPackage2: FullPackage = analyseVersion(pk2, v2);
+    
     if (fullPackage2.reg === '^') {
         return fullPackage1.firstVer === fullPackage2.firstVer;
     }
