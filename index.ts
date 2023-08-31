@@ -1,3 +1,4 @@
+import { consoleStyle } from './consolestyle';
 import { isPortOpen, run_server, depAnalyze } from './server';
 import { getLocalDepConfObj, DepConfObj } from './utils';
 import fs from 'fs';
@@ -87,6 +88,8 @@ try {
                         .then((isOpen: boolean) => {
                             if (isOpen) {
                                 run_server();
+                            }else{
+                                console.info(`提示:${consoleStyle.blue}8080端口正在使用中或被其他程序占用，本次命令调用只输出依赖详情${consoleStyle.endStyle}`)
                             }
                         })
                         .catch((err: Error) => {

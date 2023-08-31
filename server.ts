@@ -3,8 +3,9 @@ import DepAnalyze from './depanalyze';
 import net from 'net';
 import path from 'path';
 import { consoleStyle } from './consolestyle';
+import {exec} from 'child_process'
 
-export const default_port = 50000;
+export const default_port = 8080;
 export const depAnalyze = new DepAnalyze();
 depAnalyze.init();
 
@@ -18,7 +19,7 @@ export function isPortOpen(port: number = default_port): Promise<boolean> {
         server.once('error', (err: Error) => {
             if ((err as any).code === 'EADDRINUSE') {
                 console.log(
-                    // `Warning: ${consoleStyle.red}Server[http:127.0.0.1:50000] is running, please don't execute command[pkg-cli runserver]${consoleStyle.endStyle}`,
+                    // `Warning: ${consoleStyle.red}Server[http:127.0.0.1:8080] is running, please don't execute command[pkg-cli runserver]${consoleStyle.endStyle}`,
                 );
                 resolve(false); // 端口被占用
             } else {
@@ -39,18 +40,18 @@ export function run_server(pkgName:string="", ver:string="", port: number = defa
     const app = express();
     app.use(express.static(path.join(__dirname, 'vue')));
 
-    // GET https://localhost:50000/
+    // GET https://localhost:8080/
     app.get('/', (res, req) => {
         req.sendFile(path.resolve(path.join(__dirname, 'vue', 'index.html')));
     });
 
-    // https://localhost:50000/deplist
+    // https://localhost:8080/deplist
     app.get('/deplist', (res, rep) => {
         const depList = depAnalyze.getDepList();
         rep.json(depList);
     });
 
-    // https://localhost:50000/depgraph/glob&0.0.1/10
+    // https://localhost:8080/depgraph/glob&0.0.1/10
 
     app.get('/depgraph/:dep/:depth?', (res, rep) => {
         let depObj: object = {};
@@ -141,5 +142,16 @@ export function run_server(pkgName:string="", ver:string="", port: number = defa
         console.log(
             `Function:${consoleStyle.blue}graphically display the current project dependencies information${consoleStyle.endStyle}`,
         );
+        
+        exec("open http://127.0.0.1:8080", (error:any, stdout:any, stderr:any) => {
+            if (error) {
+                console.error(`执行命令时出错：${error}`);
+                return;
+            }
+            // console.log(`Next: ${stdout}`);
+            // if(stderr){
+            //     console.error(`stderr: ${stderr}`);
+            // }
+        });
     });
 }
